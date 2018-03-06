@@ -56,7 +56,7 @@ void openforwrite(int filecounter) {
     oFile.open(fileoutputname,ios::binary);
 }
 
-int mergefiles(int n)          //merges the splitted files
+int mergeFiles(int n)          //merges the splitted files
 {
 
     ofstream oFile2;
