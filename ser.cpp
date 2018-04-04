@@ -118,19 +118,7 @@ int merging(int sss, char server_response[])          //merges the splitted file
     oFile2.close();
 return 0;
 }
-int sizeCheck(char server_response[])
-{
-	int i=0;
-	for(i=0;;i++)
-	{
-		if(server_response[i]=='\0')
-		{
-			cout<<i<<endl;
-			return i;
-		}
-	}
-	
-}	
+
 void receiveing()
 {
 //create a socket
@@ -155,30 +143,91 @@ void receiveing()
         recv(network_socket, &server_response, sizeof(server_response),0);  
         //int sss=sizeCheck(server_response);
         writeInFile(server_response,filecounter,byteCounter);
-        cout<<sss<<endl;
-        merging(sss,server_response);
+        //cout<<sss<<endl;
+        //merging(sss,server_response);
 }
+
+int convertion(char server_response[])
+{
+	/*for(int i=0;server_response[i]!='\0';i++)
+	{
+		//cout<<server_response[i];
+		int h=server_response[i]-'0';
+		cout<<h<<endl;
+	}*/
+	return atoi(server_response);
+}
+
+int receiveFileNumbers()
+{
+	int network_socket;
+    network_socket = socket(AF_INET, SOCK_STREAM, 0);   //socket(int domain, int type, int protocol)
+
+    // specify an address for two socket
+
+    struct sockaddr_in server_address; //declaring the stucture of theaddress
+    server_address.sin_family= AF_INET;
+    server_address.sin_port = htons(9002);
+    server_address.sin_addr.s_addr= INADDR_ANY;
+
+    int connection_status= connect(network_socket, (struct sockaddr *)&server_address, sizeof(server_address)); //
+
+    if(connection_status==-1)
+        printf("Error\n");
+        int socket(int domain, int type, int protocol);
+
+        char server_response [416415]; //buffer
+      
+        recv(network_socket, &server_response, sizeof(server_response),0); 
+        /*for(int i=0;server_response[i]!='\0';i++)
+        	cout<<server_response[i];*/
+        int numberOfFiles=convertion(server_response) ;
+        //cout<<numberOfFiles<<endl;
+        
+        return numberOfFiles;
+        	
+}
+
+int receiveFileSize()
+{
+	int network_socket;
+    network_socket = socket(AF_INET, SOCK_STREAM, 0);   //socket(int domain, int type, int protocol)
+
+    // specify an address for two socket
+
+    struct sockaddr_in server_address; //declaring the stucture of theaddress
+    server_address.sin_family= AF_INET;
+    server_address.sin_port = htons(9002);
+    server_address.sin_addr.s_addr= INADDR_ANY;
+
+    int connection_status= connect(network_socket, (struct sockaddr *)&server_address, sizeof(server_address)); //
+
+    if(connection_status==-1)
+        printf("Error\n");
+        int socket(int domain, int type, int protocol);
+
+        char server_response [416415]; //buffer
+      
+        recv(network_socket, &server_response, sizeof(server_response),0); 
+        for(int i=0;server_response[i]!='\0';i++)
+        	cout<<"x"<<server_response[i];
+        int fileSize=convertion(server_response) ;
+        cout<<fileSize<<endl;
+        
+        return fileSize;
+        	
+}
+
 int main()
 {
     
-    receiveing();
-          /*ofstream oFile;
-		oFile.open("to.jpg",ios::binary);
-        int i=0;
-		for(i=0;i<48258;i++)
-		{
-			
-			char ch;
-			ch=server_response[i];
-			
-			oFile<<ch;
-		}
-		//cout<<"dhukinai"<<endl;
-    	oFile.close();
-	       // printf("%s", server_response);
-*/
-
-        //close(network_socket);
+    int n=receiveFileNumbers();
+   // for(int i=0;i<n;i++){
+    int size=receiveFileSize();
+    cout<<size<<endl;
+    //}
+    //receiveing();
+                 //close(network_socket);
 
     return 0;
 }
