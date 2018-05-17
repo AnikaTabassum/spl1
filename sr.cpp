@@ -34,7 +34,7 @@ int mergeFiles(int n)          //merges the splitted files
 {
 
     ofstream oFile2;
-    oFile2.open("nowowow.jpg",ios::binary);
+    oFile2.open("fin.jpg",ios::binary);
 
     char buffer[4097];
 
@@ -95,7 +95,7 @@ int main()
     //bind the socket to our specified IP and port
 	int cnt=0;
     bind(server_socket, (struct sockaddr*) &server_address, sizeof(server_address));
-	//amake mair dao;
+	
 	while(1){
     listen(server_socket, 5);
 
@@ -112,9 +112,12 @@ int main()
 		}*/
 		char *name=new char[80];
 		char fileN[4];
-		recv(client_socket, &fileN, sizeof(fileN),0);  
-		char s[7];
-    	recv(client_socket, &s, sizeof(s),0);  
+		char num[1];
+		recv(client_socket, &num, sizeof(num),0);  /////receive number of files
+		int number_of_file=num[0]-'0';
+		recv(client_socket, &fileN, sizeof(fileN),0);  ///////receive fileName array
+		char s[6];
+    	recv(client_socket, &s, sizeof(s),0);  //receive file name
 		int p=0;
 		int a=0;
 		
@@ -125,23 +128,18 @@ int main()
       		for(p=0;s[p]!='\0';p++)
       			name[p]=s[p];
       		
+      		cout<<name[p]<<endl;
       		//const char* fname = name;
       		a=name[p-1]-'0';
-      		cout<<a<<endl;
+      		//cout<<"oiij0"<<a<<endl;
+//      		cout<<a<<endl;
       		strings[a]=name;
       		printf("%s",strings[a]);
       	}
-		recv(client_socket, &fileS, sizeof(fileS),0);  
+		recv(client_socket, &fileS, sizeof(fileS),0);  //receive filesize array
       		int fileSize=0;
       		int z=0;
-      	for(int i=0;i<6;i++)
-		{
-			cout<<s[i];
-		}
-		for(int i=0;i<7;i++)
-		{
-			cout<<fileS[i];
-		}
+      	
 		if((fileS[0]=='S'||fileS[0]=='s')&&(fileS[1]=='I'||fileS[1]=='i')&&
       	(fileS[2]=='Z'||fileS[2]=='z')&&(fileS[3]=='E'||fileS[3]=='e'))
       	{
@@ -158,22 +156,16 @@ int main()
 				//cout<<i<<endl;
 			}
       	}
-      	//cout<<"k"<<k<<endl;
-      	//cout<<y<<endl;
-      	/*for(int i=0;i<z;i++)
-		{
-			cout<<tests[i];
-		}
-		cout<<endl;*/
+      	
 		cout<<fileSize<<endl;
-        char server_response [fileSize]; //buffer
-       // recv(network_socket, &tests, sizeof(tests),0);  
-       //read(sockfd,buff,sizeof(buff));
-        recv(client_socket, &server_response, sizeof(server_response),0);  //ssize_t recv(int socket, void *buffer, size_t length, int flags);
+        char server_response [fileSize]; 
+        
+        
+        recv(client_socket, &server_response, sizeof(server_response),0);  // receive file
        
-       if(cnt==7)mergeFiles(cnt);
+       if(cnt==number_of_file)mergeFiles(cnt);
 		
-		 //cout<<"sadfsdf"<<endl;
+		
 		 
         close(client_socket);
 		}
