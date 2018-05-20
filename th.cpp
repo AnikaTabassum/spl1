@@ -127,7 +127,7 @@ void *sendSock(void *threadid) {
     server_address.sin_family= AF_INET;
     server_address.sin_port = htons(9002);
     server_address.sin_addr.s_addr= INADDR_ANY;
-
+	///////////inet_pton(AF_INET, "127.0.0.1", &remote_addr.sin_addr); /********************************************************************
     int connection_status= connect(network_socket, (struct sockaddr *)&server_address, sizeof(server_address)); //
 
     if(connection_status==-1)
