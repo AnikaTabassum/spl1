@@ -13,9 +13,9 @@ using namespace std;
 
 int number_of_threads;
 ofstream oFile; 
-char file_name[7];
+char file_name[80];
 int total=0;
-
+char input[80];
 int totalByte(char* input)  ////counts the total byte of the splittedfiles
 {
     ifstream iFile;
@@ -52,13 +52,13 @@ int openForRead()
 {
 	ifstream iFile;
 	FILE *ptr_writefile;
-	char s[]="t.jpg";
+	//char input[]="t.jpg";
 	//char s[]="c.pdf";         /////////////////filename
-	iFile.open(s,ios::binary);
+	iFile.open(input,ios::binary);
 	char line [128];
 	int filecounter=1, byteCounter=1;
 
-	int total=totalByte(s);
+	int total=totalByte(input);
 
     int ft=total/5;
     int dt=total%5;
@@ -67,7 +67,7 @@ int openForRead()
     {
     	ft=ft+1; 
     }
-    openforwrite(filecounter,s);
+    openforwrite(filecounter,input);
     if(iFile.is_open())
     {
         while(!iFile.eof())
@@ -76,7 +76,7 @@ int openForRead()
 
             {
 
-                for(int i=0;i<totalByte(s);i++)
+                for(int i=0;i<totalByte(input);i++)
                 {
                     char ch;
 
@@ -87,7 +87,7 @@ int openForRead()
                         oFile.close();
                         byteCounter=1;
                         filecounter++;
-                        openforwrite(filecounter,s);
+                        openforwrite(filecounter,input);
                     }
                     oFile<<ch;
                     byteCounter++;
@@ -150,18 +150,29 @@ void send_file_name(int network_socket, long tid)
 		x=n%10;
 		temp[1]=(char)x+'0';
    	}
-
+   	int tr=0;
+	for(int i=0;i<80;i++)
+	{
+		file_name[i]=input[i];
+		if(input[i]=='\0')
+		{
+			tr=i;
+			break;
+			
+		}
+	}
+	//cout<<tr<<endl;
   	if(tid>=9)
   	{
-  		file_name[0]='t',file_name[1]='.',file_name[2]='j',file_name[3]='p',file_name[4]='g',file_name[5]=temp[0],file_name[6]=temp[1];
+  		file_name[tr]=temp[0],file_name[tr+1]=temp[1];
   		//file_name[0]='c',file_name[1]='.',file_name[2]='p',file_name[3]='d',file_name[4]='f',file_name[5]=temp[0],file_name[6]=temp[1];
   	}
   	else
   	{
-  		file_name[0]='t',file_name[1]='.',file_name[2]='j',file_name[3]='p',file_name[4]='g',file_name[5]=temp[1],file_name[6]='\0';
+  		file_name[tr]=temp[1],file_name[tr+1]='\0';
   		//file_name[0]='c',file_name[1]='.',file_name[2]='p',file_name[3]='d',file_name[4]='f',file_name[5]=temp[1],file_name[6]='\0';  
   	}	
-    send(network_socket,&file_name, sizeof(file_name),0);  /////send file names
+    send(network_socket,&file_name, tr+2,0);  /////send file names
   	
 }
 
@@ -230,11 +241,13 @@ void *sendSock(void *threadid)
 }
 
 int main () {
+   
+   	cout<<"Enter the filename"<<endl;
+   	cin>>input;
 	number_of_threads=	openForRead();
    	pthread_t threads[number_of_threads];
    	int rc;
    	int i;
-   
    	for( i = 0; i < number_of_threads; i++ ) 
    	{
       	cout << "creating thread, " << i+1 << endl;
