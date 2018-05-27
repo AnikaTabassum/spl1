@@ -73,12 +73,19 @@ int mergeFiles(int n)          //merges the splitted files
     oFile2.close();
 	return 0;
 }
+int convert(char tem[])
+{
+	int x=tem[0]-'0';
+	x=x*10+(tem[1]-'0');
+	
+	return x;
+}
 void receive_number_of_files(int client_socket)
 {	
 	char num[2];
 	recv(client_socket, &num, sizeof(num),0);  /////receive number of files
-	number_of_file=num[0]-'0';
-	number_of_file=number_of_file*10+(num[1]-'0');
+	number_of_file=convert(num);
+	
 }
 
 void receive_file_name(int client_socket)
@@ -86,9 +93,12 @@ void receive_file_name(int client_socket)
  	char *name=new char[80];
 	char fileN[4];
 	recv(client_socket, &fileN, sizeof(fileN),0);  ///////receive fileName array
-	
-	char s[7];
-    recv(client_socket, &s, sizeof(s),0);  //receive file name
+	char arr[2];
+	recv(client_socket, &arr, sizeof(arr),0); 
+	int sz=convert(arr);
+	sz=sz+2;
+	char s[sz];
+    recv(client_socket, &s, sz,0);  //receive file name
     	
 	int p=0;
 		
@@ -97,18 +107,21 @@ void receive_file_name(int client_socket)
     {
 		int a=0;
    		cnt++;
-		for(int i=0;s[i]!='\0';i++)
+   		int idx,idxx;
+		for(int i=0;i<sz;i++)
 		{
 			name[i]=s[i];
+			
 		}
-		if(s[6]=='\0')
+		if(s[sz-1]=='\0')
 		{
-			a=s[5]-'0';		
+			a=s[sz-2]-'0';		
 		}
 		else
 		{
-			a=s[5]-'0';
-			a=a*10+(s[6]-'0');
+			a=s[sz-2]-'0';
+			a=a*10+(s[sz-1]-'0');
+			
     	}	
    		strings[a]=name;
     }
@@ -172,6 +185,7 @@ int main()
        	{
        		mergeFiles(number_of_file);
        		cnt=0;
+       		cout<<"Successfully merged"<<endl;
        	}
 
         close(client_socket);

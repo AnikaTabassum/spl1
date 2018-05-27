@@ -164,14 +164,18 @@ void send_file_name(int network_socket, long tid)
 	//cout<<tr<<endl;
   	if(tid>=9)
   	{
-  		file_name[tr]=temp[0],file_name[tr+1]=temp[1];
-  		//file_name[0]='c',file_name[1]='.',file_name[2]='p',file_name[3]='d',file_name[4]='f',file_name[5]=temp[0],file_name[6]=temp[1];
+  		file_name[tr]=temp[0],file_name[tr+1]=temp[1];	
   	}
   	else
   	{
   		file_name[tr]=temp[1],file_name[tr+1]='\0';
-  		//file_name[0]='c',file_name[1]='.',file_name[2]='p',file_name[3]='d',file_name[4]='f',file_name[5]=temp[1],file_name[6]='\0';  
+  		
   	}	
+  	char arr[2];
+  	arr[0]=(tr/10)+'0';
+  	arr[1]=(tr%10)+'0';
+  	
+  	send(network_socket,&arr, 2,0); 
     send(network_socket,&file_name, tr+2,0);  /////send file names
   	
 }
