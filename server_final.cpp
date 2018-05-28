@@ -11,6 +11,7 @@ using namespace std;
 char **strings=new char*[5000];
 int number_of_file=0;
 int cnt=0;
+char *newname=new char[80];
 int totalByte2(const char* input)      //counts the total byte of the splittedfiles
 {
     ifstream iFile;
@@ -92,7 +93,7 @@ void receive_number_of_files(int client_socket)			//////receiving number of spit
 
 void receive_file_name(int client_socket)				//// receiving filenames
 {
- 	char *name=new char[80];
+ 	
 	char fileN[4];
 	recv(client_socket, &fileN, sizeof(fileN),0);  		/////receive fileName array
 	char arr[2];
@@ -101,7 +102,7 @@ void receive_file_name(int client_socket)				//// receiving filenames
 	sz=sz+2;
 	char s[sz];
     recv(client_socket, &s, sz,0);  					////receive file name
-    	
+    char *name=new char[sz];
 	int p=0;
 		
 	if((fileN[0]=='N'||fileN[0]=='n')&&(fileN[1]=='A'||fileN[1]=='a')&&
@@ -113,6 +114,7 @@ void receive_file_name(int client_socket)				//// receiving filenames
 		for(int i=0;i<sz;i++)
 		{
 			name[i]=s[i];
+			newname[i]=s[i];
 			
 		}
 		if(s[sz-1]=='\0')
@@ -151,6 +153,14 @@ void receive_file_size_and_file(int client_socket)			//////recive filesize and e
      char server_response [fileSize]; 
 
 	 recv(client_socket, &server_response, sizeof(server_response),0);  // receive file
+	 ofstream oFile;
+     oFile.open(newname,ios::binary);	
+    
+     for(int i=0;i<fileSize;i++)
+     {
+     	char ch=server_response[i];
+     	oFile<<ch;
+     }
 }
 	
 int main()
