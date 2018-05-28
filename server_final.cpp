@@ -22,22 +22,22 @@ int totalByte2(const char* input)      //counts the total byte of the splittedfi
 
         while(!iFile.eof())
         {
-            iFile.get(ch);
+            iFile.get(ch);				///reads byte wise
             byt++;
         }
-        //cout<<byt;
+       
     }
     iFile.close();
     return byt;
 
 }
-int mergeFiles(int n)          //merges the splitted files
+int mergeFiles(int n)         			 //merges the splitted files
 {
 
     ofstream oFile2;
-    oFile2.open("final.jpg",ios::binary);
+    oFile2.open("final.jpg",ios::binary);			///opens the output file
 	//oFile2.open("received.pdf",ios::binary);
-    char buffer[4097];
+    
 
     for (int i = 1; i <=n; ++i)
     {
@@ -46,7 +46,7 @@ int mergeFiles(int n)          //merges the splitted files
         printf("merging %s\n",fname);
 
         ifstream iFile2;
-        iFile2.open(fname,ios::binary);
+        iFile2.open(fname,ios::binary);				////opening files serially
 
         if(iFile2.is_open())
         {
@@ -73,32 +73,34 @@ int mergeFiles(int n)          //merges the splitted files
     oFile2.close();
 	return 0;
 }
-int convert(char tem[])
+
+int convert(char tem[])						//////converts to integer
 {
 	int x=tem[0]-'0';
 	x=x*10+(tem[1]-'0');
 	
 	return x;
 }
-void receive_number_of_files(int client_socket)
+
+void receive_number_of_files(int client_socket)			//////receiving number of spitted files
 {	
 	char num[2];
-	recv(client_socket, &num, sizeof(num),0);  /////receive number of files
+	recv(client_socket, &num, sizeof(num),0);  			/////receive number of files
 	number_of_file=convert(num);
 	
 }
 
-void receive_file_name(int client_socket)
+void receive_file_name(int client_socket)				//// receiving filenames
 {
  	char *name=new char[80];
 	char fileN[4];
-	recv(client_socket, &fileN, sizeof(fileN),0);  ///////receive fileName array
+	recv(client_socket, &fileN, sizeof(fileN),0);  		/////receive fileName array
 	char arr[2];
 	recv(client_socket, &arr, sizeof(arr),0); 
 	int sz=convert(arr);
 	sz=sz+2;
 	char s[sz];
-    recv(client_socket, &s, sz,0);  //receive file name
+    recv(client_socket, &s, sz,0);  					////receive file name
     	
 	int p=0;
 		
@@ -127,11 +129,11 @@ void receive_file_name(int client_socket)
     }
 }
 
-void receive_file_size_and_file(int client_socket)
+void receive_file_size_and_file(int client_socket)			//////recive filesize and elements of the file
 {
 	char fileS[9];
 	int tests[12];
-	recv(client_socket, &fileS, sizeof(fileS),0);  //receive filesize array
+	recv(client_socket, &fileS, sizeof(fileS),0);  			//receive filesize array
    	int fileSize=0;
     int z=0;
       	
@@ -167,13 +169,13 @@ int main()
     server_address.sin_port = htons(9002);
     server_address.sin_addr.s_addr= INADDR_ANY;
 
-    bind(server_socket, (struct sockaddr*) &server_address, sizeof(server_address));
+    bind(server_socket, (struct sockaddr*) &server_address, sizeof(server_address));	///binding socket
 	
 	while(1)
 	{
-    	listen(server_socket, 5);
+    	listen(server_socket, 5);								// listening 
 		int client_socket;
-    	client_socket=accept(server_socket,NULL,NULL);
+    	client_socket=accept(server_socket,NULL,NULL);			/// creating a socket
     	
 		receive_number_of_files(client_socket);
 		
