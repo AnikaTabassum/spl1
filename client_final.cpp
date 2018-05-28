@@ -16,6 +16,7 @@ ofstream oFile;
 char file_name[80];
 int total=0;
 char input[80];
+char fileNames[5000][5000];
 int totalByte(char* input)  ////counts the total byte of the splittedfiles
 {
     ifstream iFile;
@@ -28,7 +29,7 @@ int totalByte(char* input)  ////counts the total byte of the splittedfiles
         while(1)
         {
             if(iFile.eof()) break;
-            iFile.get(ch);
+            iFile.get(ch);			//// reading the file bytewise
             byt++;
         }
 
@@ -39,41 +40,32 @@ int totalByte(char* input)  ////counts the total byte of the splittedfiles
 }
 
 
-char strings[5000][5000];
 void openforwrite(int filecounter,char *s) {
 	char fileoutputname[15];
-	cout<<filecounter<<endl;
-	sprintf(fileoutputname, "%s%d", s,filecounter);
-	sprintf(strings[filecounter-1],fileoutputname);
-    printf("%s\n",fileoutputname);
-    oFile.open(fileoutputname,ios::binary);
+	cout<<filecounter<<" ";
+	sprintf(fileoutputname, "%s%d", s,filecounter);				//// keeping the filenamees in a two dimensional array
+	sprintf(fileNames[filecounter-1],fileoutputname);
+    printf("%s\n",fileoutputname);								//// printing the names of the splitted files
+    oFile.open(fileoutputname,ios::binary);						////opening a splitted file
 }
 int openForRead()
 {
 	ifstream iFile;
 	FILE *ptr_writefile;
-	//char input[]="t.jpg";
-	//char s[]="c.pdf";         /////////////////filename
+
 	iFile.open(input,ios::binary);
 	char line [128];
 	int filecounter=1, byteCounter=1;
 
-	int total=totalByte(input);
-
-    int ft=total/5;
-    int dt=total%5;
-
-    if(dt>0) 
-    {
-    	ft=ft+1; 
-    }
-    openforwrite(filecounter,input);
+	int total=totalByte(input);									////counting the size fo the file
+	
+    openforwrite(filecounter,input);					
     if(iFile.is_open())
     {
         while(!iFile.eof())
         {
             if(oFile.is_open())
-
+	
             {
 
                 for(int i=0;i<totalByte(input);i++)
@@ -82,7 +74,7 @@ int openForRead()
 
                     iFile.get(ch);
 
-                    if(byteCounter==(total/10)||(iFile.eof()))
+                    if(byteCounter==(total/10)||(iFile.eof()))     ///dividing a large file 
                     {
                         oFile.close();
                         byteCounter=1;
@@ -100,10 +92,8 @@ int openForRead()
     return filecounter;
 }
 
-void send_Number_of_Files(int network_socket)
+void send_Number_of_Files(int network_socket)         /////////////sends the number of splitted small files
 {
-	
-
     char num_of_file[2];
     if(number_of_threads<10)
     {
@@ -128,7 +118,7 @@ void send_Number_of_Files(int network_socket)
    
 }
 
-void send_file_name(int network_socket, long tid)
+void send_file_name(int network_socket, long tid)				///////sending the filenames of each array
 {
 	char fileN[4];
 	fileN[0]='N';fileN[1]='A';fileN[2]='M';fileN[3]='E';
@@ -161,7 +151,7 @@ void send_file_name(int network_socket, long tid)
 			
 		}
 	}
-	//cout<<tr<<endl;
+	
   	if(tid>=9)
   	{
   		file_name[tr]=temp[0],file_name[tr+1]=temp[1];	
@@ -180,7 +170,7 @@ void send_file_name(int network_socket, long tid)
   	
 }
 
-void send_file_size_and_file(int network_socket)
+void send_file_size_and_file(int network_socket)		//////sending filesize and file
 {
 	total=totalByte(file_name);
 	  	
@@ -207,11 +197,11 @@ void send_file_size_and_file(int network_socket)
      send(network_socket,&fileSize, sizeof(fileSize),0);			///send filesize
    
 	char server_message[888888];
-    send(network_socket, &server_message, total,0);			///send file
+    send(network_socket, &server_message, total,0);					///send file
    
 }
 
-void *sendSock(void *threadid) 
+void *sendSock(void *threadid) 										///creating threads
 {
     long tid;
    	tid = (long)threadid;
@@ -247,9 +237,9 @@ void *sendSock(void *threadid)
 int main () {
    
    	cout<<"Enter the filename"<<endl;
-   	cin>>input;
+   	cin>>input;													///taking filename input
 	number_of_threads=	openForRead();
-   	pthread_t threads[number_of_threads];
+   	pthread_t threads[number_of_threads];						///creating threads
    	int rc;
    	int i;
    	for( i = 0; i < number_of_threads; i++ ) 
