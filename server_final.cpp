@@ -130,7 +130,19 @@ void receive_file_name(int client_socket)				//// receiving filenames
    		strings[a]=name;
     }
 }
-
+void writeInFile()
+{
+	 ofstream oFile;
+	 int fileSize;
+     oFile.open(newname,ios::binary);	
+   // cout<<fileSize<<endl;
+    char server_response[888888];
+     for(int i=0;i<fileSize;i++)
+     {
+     	char ch=server_response[i];
+     	oFile<<ch;
+     }
+}
 void receive_file_size_and_file(int client_socket)			//////recive filesize and elements of the file
 {
 	char fileS[9];
@@ -153,19 +165,11 @@ void receive_file_size_and_file(int client_socket)			//////recive filesize and e
      char server_response [fileSize]; 
 
 	 recv(client_socket, &server_response, sizeof(server_response),0);  // receive file
-	 ofstream oFile;
-     oFile.open(newname,ios::binary);	
-    
-     for(int i=0;i<fileSize;i++)
-     {
-     	char ch=server_response[i];
-     	oFile<<ch;
-     }
+	
 }
 	
 int main()
 {
- 
     for(int i=0;i<5000;i++)
 	{
 		char *strings=new char[5000];
